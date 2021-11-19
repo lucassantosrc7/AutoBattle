@@ -97,7 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 0
   maxHealth: 100
-  baseDamage: 30
+  baseDamage: 75
   damageMultiplier: 1
   tileMove: 1
   rangeAttack: 1

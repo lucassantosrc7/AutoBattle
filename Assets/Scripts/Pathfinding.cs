@@ -106,7 +106,6 @@ public class Pathfinding : MonoBehaviour
         //While loop to work through each node going through the parents to the beginning of the path
         while (currentGrid != start)
         {
-            currentGrid.sprite.color = Color.yellow;
             //Add that node to the final path
             finalPath.Add(currentGrid);
             //Move onto its parent node

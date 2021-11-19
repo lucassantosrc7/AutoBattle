@@ -199,24 +199,6 @@ public class Grid : MonoBehaviour
     }
     #endregion
 
-    /*public Vector2 ClampGrid(Vector2 pos)
-    {
-        pos.x = Mathf.Clamp(pos.x, firstXPoint, lastXPoint);
-        pos.x = GetNearestPointOnGrid(pos).x;
-
-        float iByPos = Mathf.InverseLerp(firstXPoint - size, lastXPoint, pos.x);
-        iByPos *= createGrid.Length;
-        int i = Mathf.RoundToInt(iByPos) - 1;
-
-        float firstYPoint = transform.position.y + createGrid[i].startY;
-        float lastYPoint = firstYPoint + ((createGrid[i].numX - 2) + size);
-
-        pos.y = Mathf.Clamp(pos.y, firstYPoint, lastYPoint);
-        pos.y = GetNearestPointOnGrid(pos).y;
-
-        return pos;
-    }*/
-
     //Here we create the slots
     public void CreateSlots()
     {
@@ -406,6 +388,7 @@ public class GridSlot
         #endregion
     }
 
+    //Set the Neighbors
     public void SetNeighbors(GridSlot upNeighbor, GridSlot downNeighbor, GridSlot rightNeighbor, GridSlot leftNeighbor)
     {
         this.upNeighbor = upNeighbor;
