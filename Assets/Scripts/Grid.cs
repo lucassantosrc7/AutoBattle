@@ -28,7 +28,6 @@ public class Grid : MonoBehaviour
     public CreateGrid[] createGrid; //gridValues.length == Column //values == Lines
 
     public List<GridSlot> gridSlots; //All gridSlots in this grid
-    public List<GridSlot> FinalPath;//The completed path that the red line will be drawn along
     public Sprite sprite; //Sprite of tile grid
 
     [SerializeField]
@@ -102,19 +101,22 @@ public class Grid : MonoBehaviour
     {
         //First we take the up neighbor, to do this we have add 1 in matrix X
         int pointM = grid.matrix.x + 1;
-        grid.upNeighbor = GetNeighborByX(grid.position, pointM, createGrid[grid.matrix.y].numX);
+        GridSlot upNeighbor = GetNeighborByX(grid.position, pointM, createGrid[grid.matrix.y].numX);
 
         //Now the down neighbor, to do this we have subtract 1 in matrix X
         pointM = grid.matrix.x - 1;
-        grid.downNeighbor = GetNeighborByX(grid.position, pointM);
+        GridSlot downNeighbor = GetNeighborByX(grid.position, pointM);
 
         //Now the rigth neighbor, to do this we have add 1 in matrix Y
         pointM = grid.matrix.y + 1;
-        grid.rightNeighbor = GetNeighborByY(grid.position, pointM, createGrid.Length);
+        GridSlot rightNeighbor = GetNeighborByY(grid.position, pointM, createGrid.Length);
 
         //Now the left neighbor, to do this we have subtract 1 in matrix Y
         pointM = grid.matrix.y - 1;
-        grid.leftNeighbor = GetNeighborByY(grid.position, pointM);
+        GridSlot leftNeighbor = GetNeighborByY(grid.position, pointM);
+
+        //Set Neighbors
+        grid.SetNeighbors(upNeighbor, downNeighbor, rightNeighbor, leftNeighbor);
     }
 
     #region GetNeighbor Functions
@@ -326,13 +328,13 @@ public class GridSlot
 {
     Grid grid;//Get a grid where it belongs
 
-    public Character character { get; private set; } //The character that's on top of me
+    public List<Character> character = new List<Character>(); //The character that's on top of me
     public Vector2 position { get; private set; }//My position
     public Vector2Int matrix { get; private set; }//My positions on matrix
     public SpriteRenderer sprite { get; private set; }//My sprite
 
     //My Neighbors
-    public GridSlot upNeighbor, downNeighbor, rightNeighbor, leftNeighbor;
+    GridSlot upNeighbor, downNeighbor, rightNeighbor, leftNeighbor;
     #region CheckNeighbors
     //If I have a Up Neighbor
     public bool haveUp
@@ -391,6 +393,8 @@ public class GridSlot
         #region Sprite
         //Create object, that contains Sprite Renderer
         sprite = new GameObject("Grid" + matrix.ToString()).AddComponent<SpriteRenderer>();
+        CreatePlayer createPlayer = sprite.gameObject.AddComponent<CreatePlayer>();
+        createPlayer.gridSlot = this;
         //Set as child of Grid
         sprite.transform.SetParent(grid.transform);
         //Set position
@@ -402,21 +406,39 @@ public class GridSlot
         #endregion
     }
 
-    public void ReceiveCharacter(Character character)
+    public void SetNeighbors(GridSlot upNeighbor, GridSlot downNeighbor, GridSlot rightNeighbor, GridSlot leftNeighbor)
     {
-        /*
-		character = characterConfig.gameObject.AddComponent<Character>();
-        character.transform.SetParent(grid.room.h_Parent);
-        character.transform.position = position;
-        character.transform.localEulerAngles = Vector3.up * 180;
-        character.InitCharacter(grid.room);
+        this.upNeighbor = upNeighbor;
+        this.downNeighbor = downNeighbor;
+        this.rightNeighbor = rightNeighbor;
+        this.leftNeighbor = leftNeighbor;
+    }
 
-        string room = grid.room.room.ToString();
-		string c_Name = character.characterConfig.characterName;
-        string slotName = room + "Slot" + index;
-        PlayerPrefs.SetString(slotName, c_Name);
+    /// <summary>
+    /// Get neighbors by index, where 0 = up, 1 = down, 2 = right and 3 = left
+    /// </summary>
+    /// <param name="i">What neighbor you want</param>
+    public GridSlot GetNeighborsByIndex(int i)
+    {
+        GridSlot neighbor = null;
+        //Check which neighbors side is
+        switch (i)
+        {
+            case 0:
+                if (haveUp) neighbor = upNeighbor;
+                break;
+            case 1:
+                if (haveDown) neighbor = downNeighbor;
+                break;
+            case 2:
+                if (haveRight) neighbor = rightNeighbor;
+                break;
+            case 3:
+                if (haveLeft) neighbor = leftNeighbor;
+                break;
 
-        character.gameObject.AddComponent<Player>().slotName = slotName;
-        */
+        }
+
+        return neighbor;
     }
 }

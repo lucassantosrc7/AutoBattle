@@ -20,7 +20,7 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
-    public void FindPath(Vector3 a_StartPos, Vector3 a_TargetPos)
+    public List<GridSlot> FindPath(Vector3 a_StartPos, Vector3 a_TargetPos)
     {
         GridSlot start = grid.GetGridSlot(a_StartPos);//Gets the grid slot closest to the starting position
         GridSlot target = grid.GetGridSlot(a_TargetPos);//Gets the grid slot closest to the target position
@@ -58,30 +58,13 @@ public class Pathfinding : MonoBehaviour
             if (currentGrid == target)
             {
                 //Calculate the final path
-                GetFinalPath(start, target);
+                return GetFinalPath(start, target);
             }
 
             //Verify all neighbors
             for (int i = 0; i < 4; i++)
             {
-                GridSlot neighbor = null;
-                //Check which neighbors side is
-                switch (i)
-                {
-                    case 0:
-                        if(currentGrid.haveUp) neighbor = currentGrid.upNeighbor;
-                        break;
-                    case 1:
-                        if (currentGrid.haveDown) neighbor = currentGrid.downNeighbor;
-                        break;
-                    case 2:
-                        if (currentGrid.haveRight) neighbor = currentGrid.rightNeighbor;
-                        break;
-                    case 3:
-                        if (currentGrid.haveLeft) neighbor = currentGrid.leftNeighbor;
-                        break;
-
-                }
+                GridSlot neighbor = currentGrid.GetNeighborsByIndex(i);
 
                 //If the neighbor do not exists or has already been checked
                 if (neighbor == null || closedList.Contains(neighbor))
@@ -110,9 +93,12 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
+
+        Debug.LogWarning("Is was not possible to find a Path");
+        return null;
     }
 
-    void GetFinalPath(GridSlot start, GridSlot end)
+    List<GridSlot> GetFinalPath(GridSlot start, GridSlot end)
     {
         List<GridSlot> finalPath = new List<GridSlot>();//List to hold the path sequentially 
         GridSlot currentGrid = end;//Node to store the current node being checked
@@ -129,9 +115,7 @@ public class Pathfinding : MonoBehaviour
 
         //Reverse the path to get the correct order
         finalPath.Reverse();
-
-        //Set the final path
-        grid.FinalPath = finalPath;
+        return finalPath;
     }
 
     int GetManhattenDistance(GridSlot gridA, GridSlot gridB)
